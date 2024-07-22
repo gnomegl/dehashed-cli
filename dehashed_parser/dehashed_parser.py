@@ -31,7 +31,7 @@ def escape_special_chars(query):
 def build_query(args):
     queries = []
     for key, value in vars(args).items():
-        if key in ['address', 'email', 'hashed_password', 'ip_address', 'name', 'password', 'phone_number', 'username', 'vin']:
+        if key in ['address', 'email', 'hashed_password', 'ip_address', 'name', 'password', 'phone', 'username', 'vin']:
             if value:
                 queries.append(f"{key}:{escape_special_chars(value)}")
     return "&".join(queries)
@@ -75,7 +75,7 @@ def main():
     parser.add_argument('-i', '--ip_address', help="Specify the IP address")
     parser.add_argument('-n', '--name', help="Specify the name")
     parser.add_argument('-p', '--password', help="Specify the password")
-    parser.add_argument('-P', '--phone_number', help="Specify the phone number")
+    parser.add_argument('-P', '--phone', help="Specify the phone number")
     parser.add_argument('-u', '--username', help="Specify the username")
     parser.add_argument('-v', '--vin', help="Specify the VIN")
 
@@ -88,7 +88,7 @@ def main():
     args = parser.parse_args()
 
     # Check that at least one search criteria argument is provided
-    search_criteria = ['username', 'email', 'hashed_password', 'ip_address', 'vin', 'name', 'address', 'phone_number', 'password']
+    search_criteria = ['username', 'email', 'hashed_password', 'ip_address', 'vin', 'name', 'address', 'phone', 'password']
     if not any(getattr(args, criteria) for criteria in search_criteria):
         parser.error("At least one search criteria argument is required.")
 
@@ -118,7 +118,7 @@ def main():
 
     sorted_keys = sorted(['email', 'ip_address', 'username', 'password', 'hashed_password', 'hash_type', 'name', 'vin', 'address', 'phone'])
 
-    primary_key = next(key for key, value in vars(args).items() if value and key in ['address', 'email', 'hashed_password', 'ip_address', 'name', 'password', 'phone_number', 'username', 'vin'])
+    primary_key = next(key for key, value in vars(args).items() if value and key in ['address', 'email', 'hashed_password', 'ip_address', 'name', 'password', 'phone', 'username', 'vin'])
 
     unique_results = unique_password_results(data["entries"])
     unique_results.sort(key=lambda x: x.get(primary_key, "").lower())
