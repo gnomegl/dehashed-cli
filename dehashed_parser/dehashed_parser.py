@@ -2,13 +2,9 @@
 
 import argparse
 import requests
-import re
-import json
 import csv
 from urllib.parse import quote
 import keyring
-import getpass
-import os
 
 def get_credentials():
     email = keyring.get_password("dehashed-cli", "email")
