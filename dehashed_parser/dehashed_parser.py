@@ -1,9 +1,30 @@
+#!/usr/bin/env python3
+
 import argparse
 import requests
 import re
 import json
 import csv
 from urllib.parse import quote
+import keyring
+import getpass
+import os
+
+def get_credentials():
+    email = keyring.get_password("dehashed-cli", "email")
+    api_key = keyring.get_password("dehashed-cli", "api_key")
+    
+    if not email or not api_key:
+        print("Dehashed API credentials not found. Please enter them now:")
+        email = input("Email: ")
+        api_key = input("API Key: ")
+        
+        keyring.set_password("dehashed-cli", "email", email)
+        keyring.set_password("dehashed-cli", "api_key", api_key)
+        
+        print("Credentials stored securely.")
+    
+    return email, api_key
 
 def escape_special_chars(query):
     reserved_chars = "+-=&&||><!(){}[]^\"~*?:"
@@ -41,15 +62,14 @@ def unique_password_results(data):
     return unique_results
 
 def main():
-    with open('config.txt', 'r') as file:
-        email, api_key = file.read().splitlines()
+    email, api_key = get_credentials()
     
     parser = argparse.ArgumentParser(description="Query the Dehashed API", 
                                      epilog="Usage examples:\n"
-                                            "  dehashed_parser.py -u username\n"
-                                            "  dehashed_parser.py -e email@example.com --output results.csv\n"
-                                            "  dehashed_parser.py -e @example.com --only-passwords\n"
-                                            "  dehashed_parser.py -i 192.168.0.1 -s 100",
+                                            "  dehashed -u username\n"
+                                            "  dehashed -e email@example.com --output results.csv\n"
+                                            "  dehashed -e @example.com --only-passwords\n"
+                                            "  dehashed -i 192.168.0.1 -s 100",
                                      formatter_class=argparse.RawTextHelpFormatter)
 
     # Required arguments
